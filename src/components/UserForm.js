@@ -1,4 +1,5 @@
-import React, { useReducer } from 'react'
+import React, { useReducer, useEffect } from 'react'
+import { useParams, useNavigate } from 'react-router-dom'
 
 import '../styles/UserForm.scss'
 
@@ -10,7 +11,16 @@ const USER_STUB = {
     pesel: '',
 }
 
-export default function UserForm() {
+export default function UserForm({users, fetchData}) {
+
+    let {uuid} = useParams();
+    let navigate = useNavigate();
+    
+    useEffect(() => {
+        if (users) {
+            setFormData({type: 'init'})
+        }
+    }, [])
 
     const formReducer = (state, action) => {
         console.log(action);
@@ -22,6 +32,8 @@ export default function UserForm() {
                 }
             case 'submit':
                 return {...USER_STUB}
+            case 'init':
+                return users.filter(u => u.uuid === uuid)[0];
             default:
                 return state
         }
@@ -41,15 +53,22 @@ export default function UserForm() {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        fetch('/api/users/', {
-            method: 'POST',
+        fetch(`/api/users/${users ? uuid : ''}`, {
+            method: users ? 'PUT' : 'POST', // if users var is present its edit-view hence PUT
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify(formData),
-        }).then(
-            setFormData({type: 'submit'})
-        )
+        }).then((res) => {
+            if (res.status >= 200 && res.status <= 299) {
+                setFormData({type: 'submit'})
+                fetchData()
+                alert(`Udało się ${users ? 'edytować' : 'dodać'} użytkownika`)
+            } else {
+                alert(`Nie udało się ${users ? 'edytować' : 'dodać'} użytkownika`)
+            }
+            navigate('/');
+        })
     }
 
     return (
@@ -80,7 +99,7 @@ export default function UserForm() {
                 </div>
             </div>
             <div>
-                <button type="submit">Dodaj</button>
+                <button type="submit">{ users ? "Edytuj" : "Dodaj"}</button>
             </div>
         </form>
     )

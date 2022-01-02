@@ -1,0 +1,17 @@
+form {
+  width: 700px;
+  margin: 100px auto;
+
+  div {
+    height: 30px;
+
+    label {
+      width: 200px;
+      display: inline-block;
+    }
+
+    #access-wrapper {
+      display: inline-block;
+    }
+  }
+}

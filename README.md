@@ -7,5 +7,5 @@ Aby korzystać:
 - npm start
 
 Todo:
-[ ] widok edycji rekordu
-[ ] walidacja formularza
+- [ ] widok edycji rekordu
+- [ ] walidacja formularza
